@@ -73,6 +73,13 @@ EOF
     {
         $tags = $input->getArgument('tags');
 
-        $this->getCacheManager()->invalidateTags($tags);
+        $cacheManager = $this->getCacheManager();
+        if (!$cacheManager) {
+            $output->writeln('HTTP cache not in use.');
+
+            return 0;
+        }
+
+        $cacheManager->invalidateTags($tags);
     }
 }

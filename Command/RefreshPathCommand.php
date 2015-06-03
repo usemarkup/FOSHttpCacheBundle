@@ -71,10 +71,17 @@ EOF
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $cacheManager = $this->getCacheManager();
+        if (!$cacheManager) {
+            $output->writeln('HTTP cache not in use.');
+
+            return 0;
+        }
+
         $paths = $input->getArgument('paths');
 
         foreach ($paths as $path) {
-            $this->getCacheManager()->refreshPath($path);
+            $cacheManager->refreshPath($path);
         }
     }
 }
