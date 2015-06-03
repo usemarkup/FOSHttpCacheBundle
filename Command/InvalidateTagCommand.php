@@ -93,16 +93,27 @@ EOF
     {
         $tags = $input->getArgument('tags');
 
-        $this->getTagManager()->invalidateTags($tags);
+        $tagManager = $this->getTagManager();
+        if (!$tagManager) {
+            $output->writeln('Tag cache not in use.');
+
+            return 0;
+        }
+        $tagManager->invalidateTags($tags);
     }
 
     /**
-     * @return TagHandler|CacheManager
+     * @return TagHandler|CacheManager|null
      */
     protected function getTagManager()
     {
         if (!$this->tagHandler) {
-            $this->tagHandler = $this->getContainer()->get('fos_http_cache.handler.tag_handler');
+            $tagHandlerId = 'fos_http_cache.handler.tag_handler';
+            if ($this->getContainer()->has($tagHandlerId)) {
+                $this->tagHandler = $this->getContainer()->get($tagHandlerId);
+            } else {
+                return null;
+            }
         }
 
         return $this->tagHandler;

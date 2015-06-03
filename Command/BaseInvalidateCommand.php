@@ -40,14 +40,16 @@ abstract class BaseInvalidateCommand extends ContainerAwareCommand
 
     /**
      * Get the configured cache manager, loading fos_http_cache.cache_manager
-     * from the container if none was specified.
+     * from the container if none was specified and the service is available.
      *
-     * @return CacheManager
+     * @return CacheManager|null
      */
     protected function getCacheManager()
     {
         if (!$this->cacheManager) {
-            $this->cacheManager = $this->getContainer()->get('fos_http_cache.cache_manager');
+            $this->cacheManager = ($this->getContainer()->has('fos_http_cache.cache_manager'))
+                ? $this->getContainer()->get('fos_http_cache.cache_manager')
+                : null;
         }
 
         return $this->cacheManager;
